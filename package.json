@@ -1,0 +1,26 @@
+{
+  "name": "authpassword",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --require dotenv/config index.js",
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Gor Sargsyan <gorsargsyan@live.com>",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "nodemon": "3.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "5.1.1",
+    "dotenv": "16.4.4",
+    "express": "4.18.2",
+    "express-session": "1.18.0",
+    "passport": "0.7.0",
+    "passport-local": "1.0.0"
+  }
+}
