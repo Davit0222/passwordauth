@@ -94,6 +94,6 @@ function checkNotAuthentication(req, res, next) {
   }
   next();
 }
-app.listen(process.env.PORT, function () {
+app.listen(process.env.PORT || 3001, function () {
   console.log("Node server is running..");
 });
