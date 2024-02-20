@@ -3,9 +3,12 @@ import path from "path";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
-import passportlocal from "passport-local";
+import passportLocal from "passport-local";
+import "dotenv/config";
+
 let users = [];
 const app = express();
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -13,18 +16,18 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(express.json);
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
-app.use(passport.session);
+app.use(passport.session());
 passport.use(
-  new passportlocal.Strategy(
+  new passportLocal.Strategy(
     {
       usernameField: "email",
     },
     async (email, password, done) => {
       const user = users.find((user) => user.email === email);
-      if (user === undefinde) {
+      if (user === undefined) {
         return done(null, null, { message: "Incorect email" });
       }
       if (await bcrypt.compare(password, user.password)) {
@@ -43,13 +46,14 @@ passport.deserializeUser((id, done) => {
     users.find((user) => user.id === id)
   );
 });
-app.get("register", checkNotAuthentication, (req, res) => {
+app.get("/register", checkNotAuthentication, (req, res) => {
   res.sendFile(path.resolve("views/register.html"));
 });
-app.post("register", async (req, res) => {
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   const hashedPwd = await bcrypt.hash(password, 10);
   users.push({
+    id: Date.now().toString,
     name,
     email,
     password: hashedPwd,
@@ -57,8 +61,9 @@ app.post("register", async (req, res) => {
   res.redirect("/login");
 });
 app.get("/login", checkNotAuthentication, (req, res) => {
-  console.log(req.body);
-  res.send("send data..");
+  // console.log(req.body);
+  // res.send("send data..");
+  res.sendFile(path.resolve("views/login.html"));
 });
 app.post(
   "/login",
@@ -69,25 +74,23 @@ app.post(
 );
 app.use(checkAuthentication);
 
-app.get("/", (req, res) => {
-  if (req.checkAuthentication() === false) {
-    return res.redirect("/login");
-  }
+app.get("/", checkAuthentication, (req, res) => {
+  //res.send("hi");
   res.sendFile(path.resolve("views/app.html"));
 });
-app.get("/loggout", (req, res) => {
-  req.logOut();
-  res.redirect("/login");
+app.get("/logout", (req, res) => {
+  req.logOut(() => res.redirect("/login"));
 });
+
 function checkAuthentication(req, res, next) {
-  if (req.isAutehenticated() === false) {
+  if (req.isAutehenticated === false) {
     return res.redirect("/login");
   }
   next();
 }
 function checkNotAuthentication(req, res, next) {
-  if (req.isAutehenticated() === true) {
-    return res.redirect("/login");
+  if (req.isAutehenticated === true) {
+    return res.redirect("/");
   }
   next();
 }
