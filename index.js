@@ -5,10 +5,11 @@ import session from "express-session";
 import passport from "passport";
 import passportLocal from "passport-local";
 import "dotenv/config";
+import helmet from "helmet";
 
 let users = [];
 const app = express();
-
+app.use(helmet());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -94,6 +95,6 @@ function checkNotAuthentication(req, res, next) {
   }
   next();
 }
-app.listen(process.env.PORT || 3001, function () {
+app.listen(process.env.PORT , function () {
   console.log("Node server is running..");
 });
